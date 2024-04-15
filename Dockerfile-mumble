@@ -1,0 +1,60 @@
+# Use the official Ubuntu 22.04 image
+FROM ubuntu:22.04
+
+# Set the maintainer label
+LABEL maintainer="your-email@example.com"
+
+# Set environment variable to make package installation non-interactive
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Update the package repository and install dependencies
+RUN apt-get update \
+    && apt-get install -y \
+        build-essential \
+        cmake \
+        pkg-config \
+        qt5-qmake \
+        qtbase5-dev \
+        qttools5-dev \
+        qttools5-dev-tools \
+        libqt5svg5-dev \
+        libboost-dev \
+        libssl-dev \
+        libprotobuf-dev \
+        protobuf-compiler \
+        libprotoc-dev \
+        libcap-dev \
+        libxi-dev \
+        libasound2-dev \
+        libogg-dev \
+        libsndfile1-dev \
+        libopus-dev \
+        libspeechd-dev \
+        libavahi-compat-libdnssd-dev \
+        libxcb-xinerama0 \
+        libzeroc-ice-dev \
+        libpoco-dev \
+        g++-multilib \
+        git \
+        openssh-server \
+        wget \
+        curl \
+        nano \
+        vim \
+    && apt-get clean
+
+# Set up SSH server
+RUN mkdir /var/run/sshd
+
+# Create a working directory /app
+WORKDIR /app
+
+# Copy all contents of the mumble folder to /app
+COPY mumble/. /app/
+
+# Expose ports for both TCP and UDP on port 64738
+EXPOSE 64738/tcp
+EXPOSE 64738/udp
+
+# Set the default command to run when the container starts
+CMD ["/usr/sbin/sshd", "-D"]
